@@ -113,7 +113,7 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
 
     else if(strcmp(buf, "www") == 0)
     {
-        buf = strtok(NULL, "/");
+        buf = strtok(NULL, "/ ");
     }
 
     strncpy(name_buf, www, strlen(www));
@@ -129,7 +129,7 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     else
     {
         printf("404\n");
-        return("404");
+        return(NULL);
     }
 
 }
