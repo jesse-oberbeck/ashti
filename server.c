@@ -1,3 +1,8 @@
+///COPIED CODE///
+//SOURCE: day03/unitcp.c
+//AUTHOR: Liam Echlin
+//DESCRIPTION: Sample TCP server.
+//NOTE: Modified for this author's uses and purposes.
 // This whole file comes from day03/unitcp.c
 #define _GNU_SOURCE
 
@@ -106,14 +111,23 @@ int main(int argc, char *argv[])
 
             while(received > 0) {
                 buf[received] = '\0';
+                //THIS SECTION IS NEW/MODIFIED BY JESSE OBERBECK.
                 printf("SERVER BUF:%s", buf);
                 char * file = file_name(buf);
                 printf("<<FILE>> = %s\n", file);
-                html_file(file, remote);
+                if(strncmp(file, "cgi", 3) == 0)
+                {
+                    printf("COMPARE SUCCESS!\n");
+                    cgi_file(file, remote);
+                    free(file);
+                }
+                else
+                {
+                    html_file(file, remote);
+                }
+                //END SECTION
                 received = recv(remote, buf, sizeof(buf)-1, 0);
 
-                //TODO: check type of file here.
-                
             }
 
             if(received < 0) {
@@ -131,3 +145,4 @@ int main(int argc, char *argv[])
         close(remote);
     }
 }
+///END OF COPIED CODE/////.
