@@ -22,8 +22,15 @@
 int main(int argc, char *argv[])
 {
     if(argc != 2) {
-        fprintf(stderr, "%s <IP>\n", argv[0]);
+        fprintf(stderr, "%s <working directory>\n", argv[0]);
         return 1;
+    }
+
+    int test = chdir(argv[1]);
+    if(test != 0)
+    {
+        puts("Invalid directory.");
+        exit(1);
     }
 
     // Port numbers are in the range 1-65535, plus null byte
@@ -35,7 +42,7 @@ int main(int argc, char *argv[])
     hints.ai_family = PF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    int err = getaddrinfo(argv[1], port_num, &hints, &results);
+    int err = getaddrinfo("localhost", port_num, &hints, &results);
     if(err != 0) {
         fprintf(stderr, "Could not parse address: %s\n", gai_strerror(err));
         return 2;
@@ -121,6 +128,18 @@ int main(int argc, char *argv[])
                     cgi_file(file, remote);
                     free(file);
                 }
+                if(strncmp(file, "404", 3) == 0)
+                {
+                    not_found(file, remote);
+                }
+
+                if(strncmp(file, "HTTP", 4) == 0)
+                {
+                    puts("HTTP MATCH");
+                    char * index = "www/index.html";
+                    html_file(index, remote);
+                }
+
                 else
                 {
                     html_file(file, remote);

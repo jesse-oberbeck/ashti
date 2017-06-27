@@ -11,6 +11,20 @@
 #include <sys/types.h>
 #include <string.h>
 
+void not_found(char *fname, int socket)
+{
+
+    char * head1 = "HTTP:/1.1 200 OK\n";
+    send(socket, head1, strlen(head1), 0);
+
+    char * head2 = "Content-type: text/html\n\n";
+    send(socket, head2, strlen(head2), 0);
+
+    char *nf_error = "<html><head><title>404 - this page does not exist</title><style></style></head><h1>404</h1><h2>PAGE NOT FOUND </h2></html>";
+    printf("%s\n", nf_error);
+    send(socket, nf_error, strlen(nf_error), 0);
+}
+
 void cgi_file(char *fname, int socket)
 {
     char buffer[128];
@@ -56,6 +70,7 @@ char * file_name(char * data)
     char *cgi = "cgi-bin";
     char *cgi_bin = "cgi-bin/";
     char *www = "www/";
+    char *http = "HTTP";
     int cgi_flag = 0;
     char *name_buf = calloc(128, 1);
 
@@ -67,11 +82,17 @@ char * file_name(char * data)
         buf = strtok(NULL, "/ ");
             if(strcmp(buf, cgi) == 0)
             {
-                buf = strtok(NULL, "/ ");
+                buf = strtok(NULL, "/");
                 printf("CGI Success! %s\n", buf);
                 cgi_flag = 1;
             }
         printf("Success! %s\n", buf);
+    }
+
+    if(strncmp(buf, "HTTP", 4) == 0)
+    {
+        //strncpy(name_buf, http, strlen(http));
+        return(http);
     }
 
     else
@@ -96,7 +117,7 @@ char * file_name(char * data)
 
     else if(strcmp(buf, "www") == 0)
     {
-        buf = strtok(NULL, "/ ");
+        buf = strtok(NULL, "/");
     }
 
     strncpy(name_buf, www, strlen(www));
@@ -112,7 +133,7 @@ char * file_name(char * data)
     else
     {
         printf("404\n");
-        return(NULL);
+        return("404");
     }
 
 }
