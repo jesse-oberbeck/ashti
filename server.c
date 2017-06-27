@@ -125,9 +125,9 @@ int main(int argc, char *argv[])
             while(received >= 0) {
                 buf[received] = '\0';
                 //THIS SECTION IS NEW/MODIFIED BY JESSE OBERBECK.
-                printf("SERVER BUF:%s", buf);
+                //printf("SERVER BUF:%s", buf);
                 
-                printf("<<FILE>> = %s\n", file);
+                //printf("<<FILE>> = %s\n", file);
                 
                 //END SECTION
                 received = recv(remote, buf, sizeof(buf)-1, 0);

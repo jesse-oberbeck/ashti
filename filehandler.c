@@ -55,11 +55,11 @@ void html_file(char *fname, int socket)
     char * head2 = "Content-type: text/html\n\n";
     send(socket, head2, strlen(head2), 0);
 
-
-    while(fgets(buffer, 128, file))
+    size_t read;
+    while((read = fread(buffer, 1, 128,file)))
     {
-        printf("%s\n", buffer);
-        send(socket, buffer, strlen(buffer), 0);
+        //printf("%s\n", buffer);
+        send(socket, buffer, read, 0);
     }
 }
 
