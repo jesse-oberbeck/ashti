@@ -122,43 +122,50 @@ int main(int argc, char *argv[])
             ssize_t received = recv(remote, buf, sizeof(buf)-1, 0);
             char * file = file_name(buf);
 
-            while(received >= 0) {
+            while(received >= 0)
+            {
                 buf[received] = '\0';
+
                 //THIS SECTION IS NEW/MODIFIED BY JESSE OBERBECK.
-                //printf("SERVER BUF:%s", buf);
-                
-                //printf("<<FILE>> = %s\n", file);
-                
-                //END SECTION
+
                 received = recv(remote, buf, sizeof(buf)-1, 0);
                 puts("STILL RECIEVING");
             }
-if(strncmp(file, "cgi", 3) == 0)
-                {
-                    printf("COMPARE SUCCESS!\n");
-                    cgi_file(file, remote);
-                    free(file);
-                }
-                else if(strncmp(file, "404", 3) == 0)
-                {
-                    not_found(file, remote);
-                }
 
-                else if(strncmp(file, "HTTP", 4) == 0)
-                {
-                    puts("HTTP MATCH");
-                    char * index = "www/index.html";
-                    html_file(index, remote);
-                }
+            if(strncmp(file, "cgi", 3) == 0)
+            {
+                printf("COMPARE SUCCESS!\n");
+                cgi_file(file, remote);
+                free(file);
+            }
+            else if(strncmp(file, "404", 3) == 0)
+            {
+                not_found(file, remote);
+                free(file);
+            }
 
-                else
-                {
-                    html_file(file, remote);
-                }
-            if(received < 0) {
+            else if(strncmp(file, "HTTP", 4) == 0)
+            {
+                puts("HTTP MATCH");
+                char * index = "www/index.html";
+                free(file);
+                html_file(index, remote);
+            }
+
+            else
+            {
+                html_file(file, remote);
+                free(file);
+            }
+
+            //END SECTION
+
+            if(received < 0)
+            {
                 perror("Problem receiving");
             }
 
+            free(file);
             close(remote);
             return 0;
         }

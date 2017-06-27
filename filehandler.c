@@ -33,14 +33,11 @@ void cgi_file(char *fname, int socket)
     char * head1 = "HTTP:/1.1 200 OK\n";
     send(socket, head1, strlen(head1), 0);
 
-    //char * head2 = "Content-type: text/html\n\n";
-    //send(socket, head2, strlen(head2), 0);
-
-
-    while(fgets(buffer, 128, file))
+    size_t read;
+    while((read = fread(buffer, 1, 128, file)))
     {
-        printf("%s\n", buffer);
-        send(socket, buffer, strlen(buffer), 0);
+        //printf("%s\n", buffer);
+        send(socket, buffer, read, 0);
     }
 }
 
@@ -56,7 +53,7 @@ void html_file(char *fname, int socket)
     send(socket, head2, strlen(head2), 0);
 
     size_t read;
-    while((read = fread(buffer, 1, 128,file)))
+    while((read = fread(buffer, 1, 128, file)))
     {
         //printf("%s\n", buffer);
         send(socket, buffer, read, 0);
@@ -65,7 +62,7 @@ void html_file(char *fname, int socket)
 
 char * file_name(char * data)
 {
-    char *buf;
+    char *buf = NULL;
     char *get = "GET";
     char *cgi = "cgi-bin";
     char *cgi_bin = "cgi-bin/";
@@ -91,7 +88,7 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
 
     if(strncmp(buf, "HTTP", 4) == 0)
     {
-        strncpy(name_buf, http, strlen(http));
+        free(name_buf);
         return(http);
     }
 
@@ -101,13 +98,12 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     {
         strncpy(name_buf, cgi_bin, strlen(cgi_bin));
         strncat(name_buf, buf, 128 - strlen(cgi_bin));
-        printf("CAT RESULT! %s\n", name_buf);
         return(name_buf);
     }
 
     else if((access(buf, F_OK) != -1) && strcmp(buf, "www") != 0)
     {
-        puts("ACCESS SUCCESS!");
+        free(name_buf);
         return(buf);
     }
 
@@ -118,16 +114,15 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
 
     strncpy(name_buf, www, strlen(www));
     strncat(name_buf, buf, 128 - strlen(www));
-    printf("NAME CHANGED FOR WWW: %s\n", name_buf);
 
     if(access(name_buf, F_OK) != -1)
     {
-        puts("WWW ACCESS SUCCESS!");
         return(name_buf);
     }
 
     else
     {
+        free(name_buf);
         printf("404\n");
         return(NULL);
     }
