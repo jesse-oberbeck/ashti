@@ -88,7 +88,12 @@ int main(int argc, char *argv[])
         char ip[INET6_ADDRSTRLEN];
         unsigned short port;
 
-        int remote = accept(sd, (struct sockaddr *)&client, &client_sz);
+        ///COPIED CODE////
+        //SOURCE: https://stackoverflow.com/questions/1543466/how-do-i-change-a-tcp-socket-to-be-non-blocking
+        //AUTHOR: "Matt"
+        //DESCRIPTION: make a nonblocking socket with only one function call. Returns control to the code, allowing more requests, without perpetually trying to load more data.
+        int remote = accept4(sd, (struct sockaddr *)&client, &client_sz, SOCK_NONBLOCK);
+        ////END OF COPIED CODE/////.
         if(remote < 0) {
             perror("Could not accept connection");
             continue;
@@ -115,25 +120,31 @@ int main(int argc, char *argv[])
             printf("%s:%hu is connected\n", ip, port);
 
             ssize_t received = recv(remote, buf, sizeof(buf)-1, 0);
+            char * file = file_name(buf);
 
-            while(received > 0) {
+            while(received >= 0) {
                 buf[received] = '\0';
                 //THIS SECTION IS NEW/MODIFIED BY JESSE OBERBECK.
                 printf("SERVER BUF:%s", buf);
-                char * file = file_name(buf);
+                
                 printf("<<FILE>> = %s\n", file);
-                if(strncmp(file, "cgi", 3) == 0)
+                
+                //END SECTION
+                received = recv(remote, buf, sizeof(buf)-1, 0);
+                puts("STILL RECIEVING");
+            }
+if(strncmp(file, "cgi", 3) == 0)
                 {
                     printf("COMPARE SUCCESS!\n");
                     cgi_file(file, remote);
                     free(file);
                 }
-                if(strncmp(file, "404", 3) == 0)
+                else if(strncmp(file, "404", 3) == 0)
                 {
                     not_found(file, remote);
                 }
 
-                if(strncmp(file, "HTTP", 4) == 0)
+                else if(strncmp(file, "HTTP", 4) == 0)
                 {
                     puts("HTTP MATCH");
                     char * index = "www/index.html";
@@ -144,11 +155,6 @@ int main(int argc, char *argv[])
                 {
                     html_file(file, remote);
                 }
-                //END SECTION
-                received = recv(remote, buf, sizeof(buf)-1, 0);
-
-            }
-
             if(received < 0) {
                 perror("Problem receiving");
             }

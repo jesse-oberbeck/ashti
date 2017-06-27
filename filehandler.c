@@ -73,7 +73,7 @@ char * file_name(char * data)
     char *http = "HTTP";
     int cgi_flag = 0;
     char *name_buf = calloc(128, 1);
-
+printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     buf = strtok(data, " ");
 
     printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
@@ -82,7 +82,7 @@ char * file_name(char * data)
         buf = strtok(NULL, "/ ");
             if(strcmp(buf, cgi) == 0)
             {
-                buf = strtok(NULL, "/");
+                buf = strtok(NULL, "/ ");
                 printf("CGI Success! %s\n", buf);
                 cgi_flag = 1;
             }
@@ -91,15 +91,11 @@ char * file_name(char * data)
 
     if(strncmp(buf, "HTTP", 4) == 0)
     {
-        //strncpy(name_buf, http, strlen(http));
+        strncpy(name_buf, http, strlen(http));
         return(http);
     }
 
-    else
-    {
-        printf("404\n");
-        return(NULL);
-    }
+
 
     if(cgi_flag)
     {
