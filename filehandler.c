@@ -11,16 +11,16 @@
 #include <sys/types.h>
 #include <string.h>
 
-void not_found(char *fname, int socket)
+void not_found(int socket)
 {
 
-    char * head1 = "HTTP:/1.1 200 OK\n";
+    const char * head1 = "HTTP:/1.1 200 OK\n";
     send(socket, head1, strlen(head1), 0);
 
-    char * head2 = "Content-type: text/html\n\n";
+    const char * head2 = "Content-type: text/html\n\n";
     send(socket, head2, strlen(head2), 0);
 
-    char *nf_error = "<html><head><title>404 - this page does not exist</title><style></style></head><h1>404</h1><h2>PAGE NOT FOUND </h2></html>";
+    const char *nf_error = "<html><head><title>404 - this page does not exist</title><style></style></head><h1>404</h1><h2>PAGE NOT FOUND </h2></html>";
     printf("%s\n", nf_error);
     send(socket, nf_error, strlen(nf_error), 0);
 }
@@ -30,7 +30,7 @@ void cgi_file(char *fname, int socket)
     char buffer[128];
     FILE *file = popen(fname, "r");
 
-    char * head1 = "HTTP:/1.1 200 OK\n";
+    const char * head1 = "HTTP:/1.1 200 OK\n";
     send(socket, head1, strlen(head1), 0);
 
     size_t read;
@@ -48,10 +48,10 @@ void html_file(char *fname, int socket)
     char buffer[128];
     FILE *file = fopen(fname, "r");
 
-    char * head1 = "HTTP:/1.1 200 OK\n";
+    const char * head1 = "HTTP:/1.1 200 OK\n";
     send(socket, head1, strlen(head1), 0);
 
-    char * head2 = "Content-type: text/html\n\n";
+    const char * head2 = "Content-type: text/html\n\n";
     send(socket, head2, strlen(head2), 0);
 
     size_t read;
@@ -65,12 +65,12 @@ void html_file(char *fname, int socket)
 
 char * file_name(char * data)
 {
-    char *buf = NULL;
-    char *get = "GET";
-    char *cgi = "cgi-bin";
-    char *cgi_bin = "cgi-bin/";
-    char *www = "www/";
-    char *http = "HTTP";
+    const char *buf = NULL;
+    const char *get = "GET";
+    const char *cgi = "cgi-bin";
+    const char *cgi_bin = "cgi-bin/";
+    const char *www = "www/";
+    const char *http = "HTTP";
     int cgi_flag = 0;
     char *name_buf = calloc(128, 1);
     if(data == NULL)
@@ -96,7 +96,7 @@ char * file_name(char * data)
     if(strncmp(buf, "HTTP", 4) == 0)
     {
         free(name_buf);
-        return(http);
+        return((char *)http);
     }
 
 
@@ -112,7 +112,7 @@ char * file_name(char * data)
     {
         puts("Normal http.");
         free(name_buf);
-        return(buf);
+        return((char *)buf);
     }
 
     else if(strcmp(buf, "www") == 0)

@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
             }
             else if(strncmp(file, "404", 3) == 0)
             {
-                not_found(file, remote);
+                not_found(remote);
 
             }
 
