@@ -43,6 +43,7 @@ void cgi_file(char *fname, int socket)
 
 void html_file(char *fname, int socket)
 {
+    puts("HTML START");
     char buffer[128];
     FILE *file = fopen(fname, "r");
 
@@ -55,9 +56,10 @@ void html_file(char *fname, int socket)
     size_t read;
     while((read = fread(buffer, 1, 128, file)))
     {
-        //printf("%s\n", buffer);
+        printf("%s\n", buffer);
         send(socket, buffer, read, 0);
     }
+    fclose(file);
 }
 
 char * file_name(char * data)
@@ -94,7 +96,7 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
 
 
 
-    if(cgi_flag)
+    else if(cgi_flag)
     {
         strncpy(name_buf, cgi_bin, strlen(cgi_bin));
         strncat(name_buf, buf, 128 - strlen(cgi_bin));
@@ -103,6 +105,7 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
 
     else if((access(buf, F_OK) != -1) && strcmp(buf, "www") != 0)
     {
+        puts("Normal http.");
         free(name_buf);
         return(buf);
     }
@@ -111,12 +114,14 @@ printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     {
         buf = strtok(NULL, "/ ");
     }
-
+    printf("before. %s\n", name_buf);
     strncpy(name_buf, www, strlen(www));
     strncat(name_buf, buf, 128 - strlen(www));
+    printf("After. %s\n", name_buf);
 
     if(access(name_buf, F_OK) != -1)
     {
+        printf("Access success. %s\n", name_buf);
         return(name_buf);
     }
 
