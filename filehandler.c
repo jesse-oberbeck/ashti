@@ -89,11 +89,12 @@ char * file_name(char * data)
     const char *cgi_bin = "cgi-bin/";
     const char *www = "www/";
     const char *http = "HTTP";
+    const char *super_fail = "500";
     int cgi_flag = 0;
     char *name_buf = calloc(128, 1);
     if(data == NULL)
     {
-        return(NULL);
+        return((char *)super_fail);
     }
     printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     buf = strtok(data, " ");
@@ -153,6 +154,8 @@ char * file_name(char * data)
         printf("404\n");
         return((char *)fail);
     }
+
+    return((char *)super_fail);
 
 }
 
