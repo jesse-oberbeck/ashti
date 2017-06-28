@@ -11,6 +11,20 @@
 #include <sys/types.h>
 #include <string.h>
 
+void bad_request(int socket)
+{
+    //Sends 500 error.
+    const char * head1 = "HTTP:/1.1 200 OK\n";
+    send(socket, head1, strlen(head1), 0);
+
+    const char * head2 = "Content-type: text/html\n\n";
+    send(socket, head2, strlen(head2), 0);
+
+    const char *nf_error = "<html><head><title>500 - request cannot be processed.</title><style></style></head><h1>404</h1><h2>PAGE NOT FOUND </h2></html>";
+    printf("%s\n", nf_error);
+    send(socket, nf_error, strlen(nf_error), 0);
+}
+
 void not_found(int socket)
 {
     //Sends 404 error.
@@ -134,9 +148,10 @@ char * file_name(char * data)
 
     else
     {
+        const char *fail = "404";
         free(name_buf);
         printf("404\n");
-        return(NULL);
+        return((char *)fail);
     }
 
 }
