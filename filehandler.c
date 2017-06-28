@@ -13,7 +13,7 @@
 
 void not_found(int socket)
 {
-
+    //Sends 404 error.
     const char * head1 = "HTTP:/1.1 200 OK\n";
     send(socket, head1, strlen(head1), 0);
 
@@ -27,6 +27,7 @@ void not_found(int socket)
 
 void cgi_file(char *fname, int socket)
 {
+    //Runs and sends the result of cgi scripts.
     char buffer[128];
     FILE *file = popen(fname, "r");
 
@@ -44,6 +45,7 @@ void cgi_file(char *fname, int socket)
 
 void html_file(char *fname, int socket)
 {
+    //Opens and sends html files.
     puts("HTML START");
     char buffer[128];
     FILE *file = fopen(fname, "r");
@@ -65,6 +67,8 @@ void html_file(char *fname, int socket)
 
 char * file_name(char * data)
 {
+    //Extracts requested file name from GET, otherwise
+    //defaults to index.html or 404.
     const char *buf = NULL;
     const char *get = "GET";
     const char *cgi = "cgi-bin";
@@ -98,8 +102,6 @@ char * file_name(char * data)
         free(name_buf);
         return((char *)http);
     }
-
-
 
     else if(cgi_flag)
     {
