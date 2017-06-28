@@ -132,7 +132,9 @@ int main(int argc, char *argv[])
                 //puts("STILL RECIEVING");
             }
 
-            if(strncmp(file, "cgi", 3) == 0)
+            if(file == NULL);
+
+            else if(strncmp(file, "cgi", 3) == 0)
             {
                 printf("COMPARE SUCCESS!\n");
                 cgi_file(file, remote);
@@ -163,7 +165,7 @@ int main(int argc, char *argv[])
             {
                 perror("Problem receiving");
             }
-            if(file)
+            if(file != NULL)
             {
                 free(file);
             }

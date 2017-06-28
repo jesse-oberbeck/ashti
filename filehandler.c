@@ -39,6 +39,7 @@ void cgi_file(char *fname, int socket)
         //printf("%s\n", buffer);
         send(socket, buffer, read, 0);
     }
+    pclose(file);
 }
 
 void html_file(char *fname, int socket)
@@ -56,7 +57,7 @@ void html_file(char *fname, int socket)
     size_t read;
     while((read = fread(buffer, 1, 128, file)))
     {
-        printf("%s\n", buffer);
+        //printf("%s\n", buffer);
         send(socket, buffer, read, 0);
     }
     fclose(file);
@@ -72,7 +73,11 @@ char * file_name(char * data)
     char *http = "HTTP";
     int cgi_flag = 0;
     char *name_buf = calloc(128, 1);
-printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
+    if(data == NULL)
+    {
+        return(NULL);
+    }
+    printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
     buf = strtok(data, " ");
 
     printf("<<<<<<<<<<<<BUFCHECK: %s\n", buf);
